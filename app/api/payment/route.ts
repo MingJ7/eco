@@ -1,6 +1,5 @@
 import { getOrderByID, updateOrder } from "@/lib/mongodbaccess"
 import { createHash } from "crypto"
-import { useRouter } from "next/router"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
@@ -16,9 +15,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req:NextRequest) {
-  const {query} = useRouter();
-  if (!query.orderID) return NextResponse.json({response: `Internal Server Error`}, {status: 500})
-  const id = typeof(query.orderID) == "string" ? query.orderID : query.orderID[0]
+  const query = req.nextUrl.searchParams
+  if (!query.has("orderId")) return NextResponse.json({response: `Internal Server Error`}, {status: 500})
+  // const id = typeof(query.orderID) == "string" ? query.orderID : query.orderID[0]
+  const id = query.get("orderId")!
   console.log("payment id GET REQ", id)
   const res = await getOrderByID(id)
   if (!res) return NextResponse.json({response: `No such order`})
