@@ -67,7 +67,10 @@ export async function createMains(name: string, cnName: string, image: string, c
 
 export async function deleteMains(id: string) {
   const result = await mainsCol.deleteOne({ _id: new ObjectId(id) })
-  if (result.deletedCount) return result;
+  if (result.deletedCount){
+    updateMainMap()
+    return result;
+  } 
   return null
 }
 
@@ -103,7 +106,10 @@ export async function createSide(name: string, cnName: string, image: string, ty
 
 export async function deleteSide(id: string) {
   const result = await sidesCol.deleteOne({ _id: new ObjectId(id) })
-  if (result.deletedCount) return result;
+  if (result.deletedCount){
+    updateSideMap()
+    return result;
+  } 
   return null
 }
 
