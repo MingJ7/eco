@@ -78,7 +78,7 @@ export default function SidetBody() {
                 <tr>
                     <th>EN Name</th>
                     <th>CN Name</th>
-                    <td>Image</td>
+                    <th>Image</th>
                     <th>Type</th>
                     <th>Cost</th>
                     <th>Actions</th>
