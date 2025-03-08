@@ -76,16 +76,16 @@ export default function MainstBody() {
         <table>
             <thead>
                 <tr>
-                    <td>EN Name</td>
-                    <td>CN Name</td>
-                    <td>Image</td>
-                    <td>Cost</td>
-                    <td>Actions</td>
+                    <th>EN Name</th>
+                    <th>CN Name</th>
+                    <th>Image</th>
+                    <th>Cost</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {mainsData?.map((main) => (
-                    <tr key={main.name}>
+                    <tr key={main._id}>
                         <td>{main.name}</td>
                         <td>{main.cnName}</td>
                         <td><img src={main.image}></img></td>
