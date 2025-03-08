@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react';
-import { CartContext, CartItemNumberContext, CartProvider } from './CartContext';
+import { CartContext, CartItemNumberContext, CartProvider } from '../CartContext';
 
 export default function MenuItem({Name, DishID, Price, ImageSrc}: {Name: string, DishID: string, Price: number, ImageSrc: string}) {
   var source = "/next.svg"

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react';
-import { CartContext, CartItemNumberContext, CartProvider } from './CartContext';
+import { CartContext, CartItemNumberContext, CartProvider } from '../CartContext';
 
 export default function MainsMenuItem({ Name, DishID, Price, ImageSrc }: { Name: string, DishID: string, Price: number, ImageSrc: string }) {
   const { state, dispatch } = useContext(CartContext);
