@@ -32,6 +32,7 @@ export interface Idish {
 }
 
 export interface Iorder {
+  netsTxnRef: string,
   userEmail: string,
   total_cost: number,
   creation_time: Date,
@@ -130,7 +131,13 @@ export async function updateSide(id: string, cost: number | null, type: string |
 export async function createOrder(order: Iorder) {
   order.status = -1
   const result = await ordersCol.insertOne(order)
-  if (result.acknowledged) return result.insertedId
+  if (result.acknowledged){
+    order.netsTxnRef = result.insertedId.toHexString().slice(4)
+    const result2 = await ordersCol.updateOne({ _id: new ObjectId(result.insertedId) },
+      { $set: { netsTxnRef: order.netsTxnRef } })
+    if (result2.acknowledged && result2.modifiedCount)
+    return result.insertedId
+  } 
   return null
 }
 

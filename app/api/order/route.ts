@@ -47,6 +47,7 @@ export async function POST(req: Request) {
     total_cost += dish.side5?.cost ?? 0
   }
   const order: Iorder = {
+    netsTxnRef: "",
     userEmail: "session.user?.email",
     total_cost: total_cost,
     creation_time: timeNow,

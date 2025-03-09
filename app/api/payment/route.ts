@@ -22,38 +22,45 @@ export async function GET(req:NextRequest) {
   console.log("payment id GET REQ", id)
   const res = await getOrderByID(id)
   if (!res) return NextResponse.json({response: `No such order`})
-  const txnReq = get_tranReq(id, res.total_cost)
+  const txnReq = get_tranReq(res.netsTxnRef, res.total_cost)
   return NextResponse.json(
     {
-      "txnReq": txnReq,
+      "txnReq": JSON.stringify(txnReq),
       "keyId": key,
       "hmac": get_hmac(txnReq)
     }
   )
 }
 
-const key = "231e4c11-135a-4457-bc84-3cc6d3565506"
-const secert_key ="16c573bf-0721-478a-8635-38e53e3badf1"
+const key = "154eb31c-0f72-45bb-9249-84a1036fd1ca"
+const secert_key ="38a4b473-0295-439d-92e1-ad26a8c60279"
 
 function get_date(){
   const d = new Date()
-  const dateStr =  "" + d.getFullYear() + d.getMonth + d.getDay() + " " + 
-                    d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
+  const dateStr =  "" + d.getFullYear() + (d.getMonth() + 1).toString().padStart(2, "0") + d.getDate().toString().padStart(2, "0") + " " + 
+                    d.getHours().toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0") + ":" + d.getSeconds().toString().padStart(2, "0") + "." + d.getMilliseconds().toString().padStart(3, "0")
   return dateStr
 }
 
 function get_tranReq(id: string, cost: number){
+  cost *= 100 //Cost is in cents
   let txnReq =  {
     "ss":"1",
     "msg":{
-          "txnAmount":cost,
+          "txnAmount":cost.toString(),
           "merchantTxnRef":id,
-          "b2sTxnEndURL":"serverURL/viewOrder/" + id,
-          "s2sTxnEndURL":"serverURL/api/payment",
+          "b2sTxnEndURL":"https://httpbin.org/post",
+          // "b2sTxnEndURL":"https://localhost:3000/viewOrder/" + id,
+          "s2sTxnEndURL":"https://httpbin.org/post",
+          // "s2sTxnEndURL":"https://localhost:3000/api/payment",
   
-          "netsMid":"11137066800", 
+          "netsMid":"UMID_877772003", 
           "merchantTxnDtm": get_date(), 
   
+          // "supMsg":"",
+          // "ipAddress":"127.0.0.1",
+          // "tid":"",
+          // "langague":"en",
           "submissionMode":"B", 
           "paymentType":"SALE", 
           "paymentMode":"QR",
