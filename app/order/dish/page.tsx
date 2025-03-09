@@ -1,10 +1,7 @@
 'use client'
 
-import Link from "next/link";
 import React from 'react';
-import { CartProvider } from '../CartContext';
 import Menu from "./Menu";
-import ShowCart from "./ShowCart"
 import MainsMenu from "./MainsMenu";
 import useSWR, { Fetcher } from 'swr'
 import CatHeaders from "./CatHeaders";
@@ -27,19 +24,19 @@ export default function component() {
       />
       <h1 className="cat-header" id="meat">Meat</h1>
       <Menu
-        ItemList={sidesData?.filter((side) => side.type === "meat") ?? []}
+        ItemList={sidesData?.filter((side) => side.type === "meat" && side.expected_remainder > 0) ?? []}
       />
       <h1 className="cat-header" id="fish">Fish</h1>
       <Menu
-        ItemList={sidesData?.filter((side) => side.type === "fish") ?? []}
+        ItemList={sidesData?.filter((side) => side.type === "fish" && side.expected_remainder > 0) ?? []}
       />
       <h1 className="cat-header" id="veg">Veg</h1>
       <Menu
-        ItemList={sidesData?.filter((side) => side.type === "veg") ?? []}
+        ItemList={sidesData?.filter((side) => side.type === "veg" && side.expected_remainder > 0) ?? []}
       />
       <h1 className="cat-header" id="other">Others</h1>
       <Menu
-        ItemList={sidesData?.filter((side) => side.type === "others") ?? []}
+        ItemList={sidesData?.filter((side) => side.type === "others" && side.expected_remainder > 0) ?? []}
       />
 
       <div className='pusher'></div>
