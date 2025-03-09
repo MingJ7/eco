@@ -1,20 +1,17 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, send_from_directory, render_template
+from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from dotenv import dotenv_values
 from pymongo import MongoClient
-from bson.objectid import ObjectId
 from ultralytics import YOLO
 
 # Load a model
-model = YOLO("path/to/best.pt")  # load a custom model
+model = YOLO(r"C:\Users\Neko\Documents\ref\yolo\runs\detect\train8\weights\best.pt")  # load a custom model
 
-ObjectId()
 config = dotenv_values(".env")
 active_list = []
 all_sides = []
 side_name_to_id_map = dict()
-
 
 UPLOAD_FOLDER = './'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -26,6 +23,7 @@ mongodb_client = MongoClient(config["MONGODB_URI"])
 database = mongodb_client["EconomicRice"]
 
 def getListOfSides():
+    active_list.clear()
     all_sides = database["Sides"].find({}).to_list()
     for side in all_sides:
         print(side)
@@ -34,41 +32,42 @@ def getListOfSides():
             active_list.append(side["name"])
 
 def imageClassificaiton(img):
+    global active_list
     # split the image up
-    # run ML on each section
+    # run ML on each section?
     new_list = []
     to_remove = [item for item in active_list if item not in new_list]
-    to_add = [item for item in new_list if item not in active_list]
+    active_list = list(filter(lambda side: side not in to_remove, active_list))
+    to_add = set([item for item in new_list if item not in active_list])
+    active_list.extend(to_add)
     # mongodb code here
     for item in to_remove:
-        database['Sides'].update_one({"_id": side_name_to_id_map(item)},{"expected_remainder": 0})
+        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 0}})
     for item in to_add:
-        database['Sides'].update_one({"_id": side_name_to_id_map(item)},{"expected_remainder": 40})
+        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 40}})
 
-
-def objectDectectionWay(img):
+def objectDectectionWay(imgpath):
+    global active_list
     new_list = []
     #run ML here
     # Predict with the model
-    results = model("https://ultralytics.com/images/bus.jpg", conf=0.5)  # predict on an image
+    results = model(imgpath, conf=0.5)  # predict on an image
 
     # Access the results
     for result in results:
-        # xywh = result.boxes.xywh  # center-x, center-y, width, height
-        # xywhn = result.boxes.xywhn  # normalized
-        # xyxy = result.boxes.xyxy  # top-left-x, top-left-y, bottom-right-x, bottom-right-y
-        # xyxyn = result.boxes.xyxyn  # normalized
         names = [result.names[cls.item()] for cls in result.boxes.cls.int()]  # class name of each box
         # confs = result.boxes.conf  # confidence score of each box
         new_list = names
 
     to_remove = [item for item in active_list if item not in new_list]
-    to_add = [item for item in new_list if item not in active_list]
+    active_list = list(filter(lambda side: side not in to_remove, active_list))
+    to_add = set([item for item in new_list if item not in active_list])
+    active_list.extend(to_add)
     # mongodb code here
     for item in to_remove:
-        database['Sides'].update_one({"_id": side_name_to_id_map(item)},{"expected_remainder": 0})
+        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 0}})
     for item in to_add:
-        database['Sides'].update_one({"_id": side_name_to_id_map(item)},{"expected_remainder": 40})
+        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 40}})
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -89,8 +88,10 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('download_file', name=filename))
+            imgpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(imgpath)
+            objectDectectionWay(imgpath)
+            return redirect(url_for('view_sides'))
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -103,11 +104,12 @@ def upload_file():
 
 @app.route('/test')
 def view_sides():
-    getListOfSides()
+    # getListOfSides()
     return active_list
 
 if __name__ == "__main__":
     try:
-        app.run()
+        getListOfSides()
+        app.run(debug=True)
     finally:
         mongodb_client.close()
