@@ -22,7 +22,7 @@ export async function GET(req:NextRequest) {
   console.log("payment id GET REQ", id)
   const res = await getOrderByID(id)
   if (!res) return NextResponse.json({response: `No such order`})
-  const txnReq = get_tranReq(res.netsTxnRef, res.total_cost)
+  const txnReq = get_tranReq(id, res.netsTxnRef, res.total_cost)
   return NextResponse.json(
     {
       "txnReq": JSON.stringify(txnReq),
@@ -42,15 +42,15 @@ function get_date(){
   return dateStr
 }
 
-function get_tranReq(id: string, cost: number){
+function get_tranReq(id:string, order_id: string, cost: number){
   cost *= 100 //Cost is in cents
   let txnReq =  {
     "ss":"1",
     "msg":{
           "txnAmount":cost.toString(),
-          "merchantTxnRef":id,
-          "b2sTxnEndURL":"https://httpbin.org/post",
-          // "b2sTxnEndURL":"https://localhost:3000/viewOrder/" + id,
+          "merchantTxnRef":order_id,
+          // "b2sTxnEndURL":"https://httpbin.org/post",
+          "b2sTxnEndURL":"https://localhost:3000/viewOrder/" + id,
           "s2sTxnEndURL":"https://httpbin.org/post",
           // "s2sTxnEndURL":"https://localhost:3000/api/payment",
   
