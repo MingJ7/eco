@@ -3,10 +3,12 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from dotenv import dotenv_values
 from pymongo import MongoClient
-from ultralytics import YOLO
+from bson.objectid import ObjectId
+from ultralytics import YOLO, settings
+import requests
 
 # Load a model
-model = YOLO(r"C:\Users\Neko\Documents\ref\yolo\runs\detect\train8\weights\best.pt")  # load a custom model
+model = YOLO(os.path.realpath(r"best.pt"))  # load a custom model
 
 config = dotenv_values(".env")
 active_list = []
@@ -31,22 +33,22 @@ def getListOfSides():
         if side["expected_remainder"] > 0:
             active_list.append(side["name"])
 
-def imageClassificaiton(img):
-    global active_list
-    # split the image up
-    # run ML on each section?
-    new_list = []
-    to_remove = [item for item in active_list if item not in new_list]
-    active_list = list(filter(lambda side: side not in to_remove, active_list))
-    to_add = set([item for item in new_list if item not in active_list])
-    active_list.extend(to_add)
-    # mongodb code here
-    for item in to_remove:
-        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 0}})
-    for item in to_add:
-        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 40}})
+def getListOfSidesWebAPI():
+    r = requests.get("https://" +  config["NEXT_URL"] + "/api/side", verify=False)
+    all_sides = r.json()
+    for side in all_sides:
+        print(side)
+        side_name_to_id_map[side["name"]] = side["_id"]
+        if side["expected_remainder"] > 0:
+            active_list.append(side["name"])
 
-def objectDectectionWay(imgpath):
+def updateMongoDB(to_remove, to_add):
+    for item in to_remove:
+        database['Sides'].update_one({"_id": ObjectId(side_name_to_id_map[item])},{"$set": {"expected_remainder": 0}})
+    for item in to_add:
+        database['Sides'].update_one({"_id": ObjectId(side_name_to_id_map[item])},{"$set": {"expected_remainder": 40}})
+
+def objectDectection(imgpath):
     global active_list
     new_list = []
     #run ML here
@@ -64,10 +66,7 @@ def objectDectectionWay(imgpath):
     to_add = set([item for item in new_list if item not in active_list])
     active_list.extend(to_add)
     # mongodb code here
-    for item in to_remove:
-        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 0}})
-    for item in to_add:
-        database['Sides'].update_one({"_id": side_name_to_id_map[item]},{"$set": {"expected_remainder": 40}})
+    return to_remove, list(to_add)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -75,6 +74,27 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        imgpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(imgpath)
+        to_remove, to_add = objectDectection(imgpath)
+        to_add = [side_name_to_id_map[item] for item in to_add]
+        to_remove = [side_name_to_id_map[item] for item in to_remove]
+        return {"to_remove_list": to_remove, "to_add_list": to_add}
+
+@app.route('/test', methods=['GET', 'POST'])
+def upload_file_test():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -90,7 +110,8 @@ def upload_file():
             filename = secure_filename(file.filename)
             imgpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(imgpath)
-            objectDectectionWay(imgpath)
+            to_remove, to_add= objectDectection(imgpath)
+            updateMongoDB(to_remove, to_add)
             return redirect(url_for('view_sides'))
     return '''
     <!doctype html>
@@ -102,14 +123,13 @@ def upload_file():
     </form>
     '''
 
-@app.route('/test')
+@app.route('/view')
 def view_sides():
-    # getListOfSides()
     return active_list
 
 if __name__ == "__main__":
     try:
-        getListOfSides()
+        getListOfSidesWebAPI()
         app.run(debug=True)
     finally:
         mongodb_client.close()
