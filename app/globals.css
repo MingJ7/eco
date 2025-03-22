@@ -117,6 +117,9 @@ input+label{
   @apply pl-2
 }
 
+.Nav-bar{
+  @apply bg-green-200 shadow-lg grid grid-cols-1 lg:mb-0 lg:grid-cols-4 lg:text-left;
+}
 .cat-header-bar{
   @apply sticky flex top-0 items-center w-full bg-black justify-start z-10;
 }
@@ -151,4 +154,8 @@ input+label{
 
 .pusher {
   @apply h-14;
+}
+
+.flex-filler {
+  @apply grow;
 }

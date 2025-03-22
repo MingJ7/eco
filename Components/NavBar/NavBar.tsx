@@ -1,21 +1,31 @@
-import Image from 'next/image'
+"use client"
 import NavBarItem from './NavBarItem'
+import { signIn, signOut, useSession } from 'next-auth/react'
+
+export function LoginBar() {
+  const { data: session } = useSession()
+  if (!session) return <button className='btn-sm green' onClick={()=>signIn()}>Sign in</button>
+  return (
+    <div className='flex w-full items-center'>
+      <div className=''>{session.user?.name}</div>
+      <div className='flex-filler'></div>
+      <button className='btn-sm green' onClick={()=>signOut()}>Sign Out</button>
+    </div>
+  )
+}
 
 export default function NavBar() {
   return (
-    <div className="grid text-center grid-cols-1 lg:mb-0 lg:grid-cols-4 lg:text-left bg-green-200">
-        <h1 className='text-4xl font-bold'>
-          Eco
-        </h1>
-        <NavBarItem
-          url="/order/dish"
-          header='Order'
-        />
-        <div/>
-        <NavBarItem
-          url="/login"
-          header='Login'
-        />
+    <div className="Nav-bar">
+      <h1 className='text-4xl font-bold float-left'>
+        Chia's Eco Rice
+      </h1>
+      <NavBarItem
+        url="/order/dish"
+        header='Create Order'
+      />
+      <div />
+      <LoginBar />
     </div>
   )
 }
