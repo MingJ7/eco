@@ -86,8 +86,6 @@ const cartItemNumberReducer = (state: number, action: {type: string, payload: nu
 export const CartProvider = ({children}: {children: React.ReactNode}) => {
     const [state, dispatch] = useReducer(productReducer, initialState)
     const [state2, dispatch2] = useReducer(cartItemNumberReducer, 0)
-    // console.log("appProvider rUN")
-    // console.log(dispatch)
     
     return (
         <CartItemNumberContext.Provider value={{state: state2, dispatch: dispatch2}}>

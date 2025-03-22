@@ -50,13 +50,6 @@ export default function component() {
       console.log("function has ended")
   }
   
-  // if (paymentData){ //doesn't work due ot doubble calling
-  //   let qrScript = document.createElement("script");
-  //   qrScript.innerHTML = `console.log("My custome sendPayload"); sendPayLoad('${paymentData.txnReq}', '${paymentData.hmac}', '${paymentData.keyId}');`
-  //   console.log(qrScript)
-  //   console.log(typeof(qrScript))
-  //   document.body.appendChild(qrScript)
-  // }
   useEffect(function action(){
     if (paymentData){
         let qrScript = document.createElement("script");
@@ -67,21 +60,27 @@ export default function component() {
       }
     return function cleanup(){}
   }, [paymentData])
+
+  const totalCost = cart.products.length ? cart.products.reduce((acc, cur) => { return { main: null, sides: [], cost: acc.cost + cur.cost } }).cost : 0
+
   return (
-    <div style={{ marginBottom: "4rem", textAlign: "center" }}>
+    <div>
         <Script src="https://uat2.enets.sg/GW2/js/jquery-3.1.1.min.js" type="text/javascript"></Script>
         <Script src="https://uat2.enets.sg/GW2/pluginpages/env.jsp"></Script>
         <Script type="text/javascript" src="https://uat2.enets.sg/GW2/js/apps.js"></Script>
 
+        <h1>Payment</h1>
+        <h2>{param.id}</h2>
         <div id="anotherSection">
           <fieldset>
             <div id="ajaxResponse"></div>
           </fieldset>
         </div>
-        <p>Total: {orderData?.total_cost} SGD</p>
-        <p>Cart based Total: {cart.products.reduce((acc, cur) => { return { main: null, sides: [], cost: acc.cost + cur.cost }}).cost} SGD</p>
+        <h2>Total: {orderData ? orderData.total_cost.toFixed(2) : totalCost.toFixed(2)} SGD</h2>
         <button
+        className='btn red'
         onClick={()=>makePayment(param.id)}
+        hidden
         >
             Click here to skip payment
         </button>

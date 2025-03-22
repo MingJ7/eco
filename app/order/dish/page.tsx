@@ -18,23 +18,23 @@ export default function component() {
 
     <div style={{ marginBottom: "4rem", textAlign: "center" }}>
       <CatHeaders />
-      <h1 className="cat-header" id="mains">Mains</h1>
+      <h1 className="cat-header-title" id="mains">Mains</h1>
       <MainsMenu
         ItemList={mainsData ?? []}
       />
-      <h1 className="cat-header" id="meat">Meat</h1>
+      <h1 className="cat-header-title" id="meat">Meat</h1>
       <Menu
         ItemList={sidesData?.filter((side) => side.type === "meat" && side.expected_remainder > 0) ?? []}
       />
-      <h1 className="cat-header" id="fish">Fish</h1>
+      <h1 className="cat-header-title" id="fish">Fish</h1>
       <Menu
         ItemList={sidesData?.filter((side) => side.type === "fish" && side.expected_remainder > 0) ?? []}
       />
-      <h1 className="cat-header" id="veg">Veg</h1>
+      <h1 className="cat-header-title" id="veg">Veg</h1>
       <Menu
         ItemList={sidesData?.filter((side) => side.type === "veg" && side.expected_remainder > 0) ?? []}
       />
-      <h1 className="cat-header" id="other">Others</h1>
+      <h1 className="cat-header-title" id="other">Others</h1>
       <Menu
         ItemList={sidesData?.filter((side) => side.type === "others" && side.expected_remainder > 0) ?? []}
       />

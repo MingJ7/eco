@@ -41,6 +41,9 @@ h2{
   @apply text-xl font-semibold;
 }
 
+h3{
+  @apply font-semibold;
+}
 /* Buttons */
 .btn,
 .btn-sm {
@@ -114,12 +117,20 @@ input+label{
   @apply pl-2
 }
 
-.cat-header {
+.cat-header-bar{
+  @apply sticky flex top-0 items-center w-full bg-black justify-start z-10;
+}
+
+.cat-header-title {
   @apply mt-2 md:mt-5 md:text-4xl text-2xl font-bold;
 }
 
+.cat-header{
+  @apply flex-1 bottom-0 hover:bg-yellow-100 text-sm md:text-lg font-extrabold border-2 border-black rounded-lg m-0 py-3 md:py-4 px-3 md:px-4;
+}
+
 .side {
-  @apply px-3 w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-500;
+  @apply px-3 w-full h-full max-w-sm relative bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-500;
 }
 
 .selected-side {
@@ -127,11 +138,15 @@ input+label{
 }
 
 .main-item {
-  @apply px-3 w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-500;
+  @apply px-3 w-full h-full max-w-sm relative bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-500;
 }
 
 .selected-main-item {
   @apply bg-blue-500 border border-gray-200 dark:bg-blue-800 dark:border-blue-700;
+}
+
+#ajaxResponse div{
+  align-items:center;
 }
 
 .pusher {

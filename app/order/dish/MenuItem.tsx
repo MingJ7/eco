@@ -38,14 +38,16 @@ export default function MenuItem({Name, DishID, Price, ImageSrc}: {Name: string,
     }
   }
   return (
-      <div>
-        <button 
-        className={btnClassName}
-        onClick={onClickAction}>       
-          <div className="px-5 pb-5">
-            <img className="object-fill py-3" src={ImageSrc}></img>
-            <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-300">{Name}</h5>
-          </div>
+      <div className='h-full pb-2'>
+        <button className='h-full' onClick={onClickAction}>
+          <div className={btnClassName}>  
+            {/* <div className="px-5 pb-5"> */}
+              <img className="object-fill py-3" src={ImageSrc}></img>
+              <div className="text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-300">{Name}</div>
+              <br/>
+              <div className="absolute bottom-0 right-0 text-lg">${Price.toFixed(2)}</div>
+            {/* </div> */}
+          </div>     
         </button>
       </div>
   )

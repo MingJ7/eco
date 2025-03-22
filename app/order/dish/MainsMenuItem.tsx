@@ -37,12 +37,14 @@ export default function MainsMenuItem({ Name, DishID, Price, ImageSrc }: { Name:
     }
   }
   return (
-    <div>
-      <button onClick={onClickAction}>
+    <div className='h-full pb-2'>
+      <button className='h-full' onClick={onClickAction}>
         <div className={btnClassName}>
           <div className="px-3 pb-3">
             <img className="object-fill py-3" src={ImageSrc}></img>
             <h5 className="md:text-xl text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-300">{Name}</h5>
+            <br />
+            <div className="absolute bottom-0 right-0 text-lg">${Price.toFixed(2)}</div>
           </div>
         </div>
       </button>

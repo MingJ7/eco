@@ -8,14 +8,14 @@ function Component() {
       <>
         Signed in as {session.user?.email} <br />
         Signed in as {session.user?.role} <br />
-        <button onClick={() => signOut()}>Sign out</button>
+        <button className="btn" onClick={() => signOut()}>Sign out</button>
       </>
     )
   }
   return (
     <>
       Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
+      <button className="btn" onClick={() => signIn()}>Sign in</button>
     </>
   )
 }
