@@ -78,13 +78,11 @@ export default function component() {
         </div>
         <h2>Total: {orderData ? orderData.total_cost.toFixed(2) : totalCost.toFixed(2)} SGD</h2>
         <button
-        className='btn red'
+        className='btn red hidden'
         onClick={()=>makePayment(param.id)}
-        hidden
         >
             Click here to skip payment
         </button>
-        <div>{param.id}</div>
     </div>
   );
 }
