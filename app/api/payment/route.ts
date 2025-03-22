@@ -1,15 +1,38 @@
-import { getOrderByID, updateOrder } from "@/lib/mongodbaccess"
+import { getOrderByID, getOrderBynetsTxnRef, updateOrdeByNetsTxnRef } from "@/lib/mongodbaccess"
 import { createHash } from "crypto"
+import { headers } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
+  const headerList = await headers()
   console.log("payment POST REQ")
-  const {msg} = await req.json()
+  const formData = await req.formData()
+  // var msg = JSON.parse(decodeURI(formData.get("message")!.toString()!));
+  let msgbody = decodeURIComponent(formData.get("message")!.toString()!)
+  console.log(msgbody)
+  msgbody = msgbody.replace(/(?<!")\+/g, ' ')
+  const fulljson = JSON.parse(msgbody);
+  const msg = fulljson.msg
+  console.log(fulljson)
   console.log(msg)
+  // const txnRespHmac = headerList.get("hmac")
+  const txnRespHmac = formData.get("hmac")
+  if (get_hmac(fulljson) != txnRespHmac){
+    console.log("invalid hmac", txnRespHmac, get_hmac(fulljson))
+    return NextResponse.json({response: "Invalid hmac"}, {status: 400})
+  }
   
   if (msg.netsTxnStatus != 0) return NextResponse.json({})
-  const ok = await updateOrder(msg.merchantTxnRef, 0)
-  if (ok) return NextResponse.json({id: msg.merchantTxnRef})
+  const ok = await updateOrdeByNetsTxnRef(msg.merchantTxnRef, 0)
+  if (ok) {
+    const order = await getOrderBynetsTxnRef(msg.merchantTxnRef)
+    if (order){
+      const url = req.nextUrl.clone()
+      url.pathname = "/viewOrder/" + order._id
+      return NextResponse.redirect(url)
+      // return NextResponse.redirect("/viewOrder/" + order._id)
+    }
+  }
   console.log(ok)
   return NextResponse.json({response: `Internal Server Error`}, {status: 500})
 }
@@ -42,16 +65,17 @@ function get_date(){
   return dateStr
 }
 
-function get_tranReq(id:string, order_id: string, cost: number){
+function get_tranReq(id:string, netsTxnRef: string, cost: number){
   cost *= 100 //Cost is in cents
   let txnReq =  {
     "ss":"1",
     "msg":{
           "txnAmount":cost.toString(),
-          "merchantTxnRef":order_id,
+          "merchantTxnRef":netsTxnRef,
           // "b2sTxnEndURL":"https://httpbin.org/post",
-          "b2sTxnEndURL":"https://localhost:3000/viewOrder/" + id,
-          "s2sTxnEndURL":"https://httpbin.org/post",
+          // "b2sTxnEndURL":"https://localhost:3000/viewOrder/" + id,
+          "b2sTxnEndURL":"https://localhost:3000/api/payment",
+          // "s2sTxnEndURL":"https://httpbin.org/post",
           // "s2sTxnEndURL":"https://localhost:3000/api/payment",
   
           "netsMid":"UMID_877772003", 
@@ -75,6 +99,7 @@ function get_tranReq(id:string, order_id: string, cost: number){
 
 function get_hmac(txnReq: any){
   const txnReqStr = JSON.stringify(txnReq)
+  console.log("getting hmac for :\n", txnReqStr)
   const hmac = createHash("sha256").update(txnReqStr + secert_key).digest("base64")
   return hmac
 }

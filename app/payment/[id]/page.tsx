@@ -21,7 +21,7 @@ export default function component() {
       const JSONdata = JSON.stringify({msg: {merchantTxnRef: orderId, netsTxnStatus: 0}})
 
       // API endpoint where we send form data.
-      const endpoint = '/api/payment'
+      const endpoint = '/api/payment/skip'
 
       // Form the request for sending data to the server.
       const options = {

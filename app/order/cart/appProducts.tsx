@@ -87,8 +87,6 @@ export default function AppProducts(param: {}) {
       })}
       <p>Total: { cart.products.length ? cart.products.reduce((acc, cur) => { return { main: null, sides: [], cost: acc.cost + cur.cost }}).cost : 0} SGD</p>
       <button className="text-md font-bold mt-1 bg-green-300 px-2 rounded-md border-1" onClick={() => { handleSubmit(cart.products); }}>Place Order</button>
-      {/* <button className="text-md font-bold mt-1 bg-green-300 px-2 rounded-md border-1" onClick={() => {redirect("/payment")}}>Place Order</button> */}
-      <button className="text-md font-bold mt-1 bg-green-300 px-2 rounded-md border-1" onClick={() => { router.push("/payment") }}>Place Order no order</button>
     </div>
   );
 };

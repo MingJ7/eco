@@ -148,6 +148,13 @@ export async function updateOrder(id: string, status: number) {
   return null
 }
 
+export async function updateOrdeByNetsTxnRef(netsTxnRef: string, status: number) {
+  const result = await ordersCol.updateOne({ netsTxnRef: netsTxnRef },
+    { $set: { status: status } })
+  if (result.acknowledged) return result.modifiedCount
+  return null
+}
+
 export async function rejectOrderByStoreClose() {
   const result = await ordersCol.updateMany({ status: 0 },
     {
@@ -211,4 +218,7 @@ export async function getAllIncompleteOrder() {
 
 export async function getOrderByID(id: string) {
   return await ordersCol.findOne({ _id: new ObjectId(id) })
+}
+export async function getOrderBynetsTxnRef(netsTxnRef: string) {
+  return await ordersCol.findOne({ netsTxnRef: netsTxnRef })
 }
