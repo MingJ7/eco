@@ -48,7 +48,7 @@ export default function Component() {
                     </div>
             }
             <br/>
-            <a href="/order">New Order</a>
+            <a href="/order/dish">New Order</a>
         </div>
     )
 }
