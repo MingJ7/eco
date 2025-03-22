@@ -1,6 +1,6 @@
 "use client"
 import { useSession, signIn, signOut } from "next-auth/react"
-import AuthContext from "../Components/Auth/AuthContext"
+import AuthContext from "../../Components/Auth/AuthContext"
 function Component() {
   const { data: session } = useSession()
   if (session) {
