@@ -1,24 +1,38 @@
 "use client"
 import useSWR, { Fetcher } from 'swr'
-import ModButtons from './modificationButtons';
 import RejectComponent from './rejectPane';
-import useModal from "@/app/Components/Modal/useModal"
-
-
+import { useState } from 'react';
 
 export default function Component() {
-  const { isOpen, toggle } = useModal();
+  const [ selectedData, setSelectedData ] = useState<any>()
 
   const fetcher: Fetcher<Array<any>, string> = (uri) => fetch(uri).then((res) => {console.log(res); return res.json()});
   const { data: orderData, error: orderError, isLoading: orderIsLoading } = useSWR('/api/admin/order', fetcher, {refreshInterval: 5000});
 
+  const attemptComplete = async function (id: string) {
+    // Form the request for sending data to the server.
+    const options = {
+        // The method is POST because we are sending data.
+        method: 'POST',
+        // Tell the server we're sending JSON.
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // Body of the request is the JSON data we created above.
+        body: JSON.stringify({ id: id , status: 1}),
+    }
+    const response = await fetch("/api/admin/order", options)
+    if (response.status == 200) {
+        alert("completed")
+    }
+  }
+
   return (
-    <div>
-      {/* <h1>Orders</h1> */}
+    <div className='flex flex-col items-center'>
       {orderData?.map((order) =>{
         const dishes = order.dishes
         return (
-        <div key={order._id.toString()} className='border-2 border-black'>
+        <div key={order._id.toString()} className='border-2 border-black w-fit px-5 rounded-lg mb-1'>
           <div>Order #{order._id.toString()}</div>
           {dishes?.map((dish: any, idx: number) => { 
             console.log(dish)
@@ -34,14 +48,16 @@ export default function Component() {
             </div>
           })}
           <div className='w-full border-black'>
-          <ModButtons {...{id: order._id.toString()}}/>
-          <button className="w-full max-w-sm bg-red-500 border border-gray-200 rounded-lg shadow dark:bg-red-800 dark:border-red-700" 
-            onClick={toggle}>Rejected</button>
-            {orderData ? <RejectComponent isOpen={isOpen} toggle={toggle} {...{order: order}}></RejectComponent> : <h2>No Data</h2>}
+          <button className="w-full max-w-sm btn green" 
+            onClick={() => attemptComplete(order._id.toString())}>Complete</button>
+          <button className="w-full max-w-sm btn red" 
+            onClick={()=>setSelectedData(order)}>Rejected</button>
           </div>
+          {/* {orderData ? <RejectComponent isOpen={isOpen} toggle={toggle} {...{order: order}}></RejectComponent> : <h2>No Data</h2>} */}
         </div>
         )
       })}
+      <RejectComponent order={selectedData} setSelected={setSelectedData}/>
     </div>
   )
 }
