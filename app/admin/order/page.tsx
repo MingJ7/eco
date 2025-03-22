@@ -51,9 +51,8 @@ export default function Component() {
           <button className="w-full max-w-sm btn green" 
             onClick={() => attemptComplete(order._id.toString())}>Complete</button>
           <button className="w-full max-w-sm btn red" 
-            onClick={()=>setSelectedData(order)}>Rejected</button>
+            onClick={()=>setSelectedData(order)}>Reject</button>
           </div>
-          {/* {orderData ? <RejectComponent isOpen={isOpen} toggle={toggle} {...{order: order}}></RejectComponent> : <h2>No Data</h2>} */}
         </div>
         )
       })}

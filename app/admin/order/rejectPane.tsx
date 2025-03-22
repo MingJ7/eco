@@ -71,7 +71,7 @@ export default function RejectComponent({order, setSelected}: {order: WithId<Ior
                     <input type="radio" id="noStockRadioBtn" name="mainReason" value="Out of Stock" onClick={() => setShowSubReason(false)}></input>
                     <label htmlFor="noStockRadioBtn">Out of Stock</label><br />
 
-                    <div id="itemList" className="" hidden={showSubReason}>
+                    <div id="itemList" className="px-4" hidden={showSubReason}>
                         {Array.from(mainSet, (main) =>
                             <div key={main.name}>
                                 <input type="checkbox" name="subReason" value={main._id.toString()} />
@@ -84,7 +84,7 @@ export default function RejectComponent({order, setSelected}: {order: WithId<Ior
                             </div>)}
                     </div>
 
-                    <button type="submit" className="dark:bg-red-800 dark:border-red-700 rounded-md p-0.5">submit</button>
+                    <button type="submit" className="btn red">Reject</button>
                 </form>
             </div>
         </div>

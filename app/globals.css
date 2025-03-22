@@ -25,10 +25,26 @@ body {
   min-height: 100%;
 }
 
+table, th, td {
+  @apply border border-black p-2;
+}
+
+button {
+  @apply border border-black bg-gray-200 rounded-md p-1 m-1;
+}
+
+h1{
+  @apply text-4xl font-bold;
+}
+
+h2{
+  @apply text-xl font-semibold;
+}
+
 /* Buttons */
 .btn,
 .btn-sm {
-    @apply text-sm font-medium inline-flex items-center justify-center rounded-lg whitespace-nowrap transition-all;
+    @apply font-bold inline-flex items-center justify-center rounded-lg whitespace-nowrap transition-all;
 }
 
 .btn {
@@ -39,6 +55,17 @@ body {
     @apply px-3 py-[5px] shadow-sm;
 }
 
+.green{
+  @apply bg-green-300;
+}
+
+.red{
+  @apply bg-red-300;
+}
+
+.purple{
+  @apply bg-purple-300;
+}
 /* Forms */
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
@@ -61,7 +88,7 @@ input[type="search"]::-webkit-search-results-decoration {
 .form-multiselect,
 .form-select,
 input[type=text], input[type=number] {
-    @apply bg-white text-sm py-2.5 px-4 focus:border-blue-300 border-red-900 border rounded-lg shadow-sm;
+    @apply bg-white text-sm py-1 px-4 focus:border-blue-300 border-red-900 border rounded-lg shadow-sm;
 }
 
 .form-input,
@@ -79,12 +106,12 @@ input {
     @apply text-gray-800 checked:bg-blue-500 checked:border-transparent;
 }
 
-table, th, td {
-    @apply border border-black p-2;
+.form-table, .form-table tr, .form-table td{
+  @apply border-0;
 }
 
-button {
-  @apply border border-black bg-gray-200 rounded-md p-1 m-1;
+input+label{
+  @apply pl-2
 }
 
 .cat-header {

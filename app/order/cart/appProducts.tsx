@@ -69,14 +69,14 @@ export default function AppProducts(param: {}) {
             </div>
             <p className="mr-10">{order.cost.toFixed(2)} SGD</p>
             <button
-              className={`rounded-sm w-full bg-purple-300 px-2 font-semibold`}
+              className={`w-full purple btn-sm`}
               onClick={() => {
                 setItemNumber({ type: 'SET', payload: index });
                 router.replace("dish")
               }}>
               Edit
             </button>
-            <div><button className="w-full bg-red-300 px-2 rounded-b-sm font-semibold"
+            <div><button className="w-full btn-sm red"
               onClick={() => {
                 if (itemNumber === index) setItemNumber({ type: 'SET', payload: 0 })
                 cartDispatch({
@@ -86,7 +86,7 @@ export default function AppProducts(param: {}) {
           </div>)
       })}
       <p>Total: { cart.products.length ? cart.products.reduce((acc, cur) => { return { main: null, sides: [], cost: acc.cost + cur.cost }}).cost : 0} SGD</p>
-      <button className="text-md font-bold mt-1 bg-green-300 px-2 rounded-md border-1" onClick={() => { handleSubmit(cart.products); }}>Place Order</button>
+      <button className="btn green" onClick={() => { handleSubmit(cart.products); }}>Place Order</button>
     </div>
   );
 };

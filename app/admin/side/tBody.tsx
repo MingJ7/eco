@@ -93,14 +93,14 @@ export default function SidetBody() {
                         <td>{side.type}</td>
                         <td>{side.cost}</td>
                         <td>
-                            <div><button onClick={() => attemptDelete(side._id)}>Delete</button></div>
-
                             {
                                 side.expected_remainder > 0 ?
-                                    <div><button onClick={() => attemptDisable(side._id)}>Disable</button></div>
-                                    :
-                                    <div><button onClick={() => attemptEnable(side._id)}>Enable</button></div>
+                                <div><button className="btn-sm purple" onClick={() => attemptDisable(side._id)}>Disable</button></div>
+                                :
+                                <div><button className="btn-sm green" onClick={() => attemptEnable(side._id)}>Enable</button></div>
                             }
+
+                            <div><button className="btn-sm red" onClick={() => attemptDelete(side._id)}>Delete</button></div>
                         </td>
                     </tr>
                 ))}

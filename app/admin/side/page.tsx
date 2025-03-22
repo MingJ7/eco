@@ -1,12 +1,18 @@
-import { getAllSide } from "@/lib/mongodbaccess"
+"use client"
 import SidetBody from "./tBody"
-import { checkAdmin } from "@/app/Components/Auth/AdminControl"
+import { useRouter } from "next/navigation"
 
 
-export default async function Component() {
-  // await checkAdmin()
-
+export default function Component() {
+  const router = useRouter()
   return (
-    <SidetBody />
+    <>
+      <SidetBody />
+      <button
+      className="btn-sm green"
+      onClick={()=> router.push("side/curd")}>
+        Add Side
+      </button>
+    </>
   )
 }

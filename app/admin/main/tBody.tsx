@@ -91,13 +91,13 @@ export default function MainstBody() {
                         <td><img src={main.image}></img></td>
                         <td>{main.cost}</td>
                         <td>
-                            <div><button onClick={() => attemptDelete(main._id)}>Delete</button></div>
                             {
                                 main.status === 1 ?
-                                <div><button onClick={() => attemptDisable(main._id)}>Disable</button></div>
+                                <div><button className="btn-sm purple" onClick={() => attemptDisable(main._id)}>Disable</button></div>
                                 :
-                                <div><button onClick={() => attemptEnable(main._id)}>Enable</button></div>
+                                <div><button className="btn-sm green" onClick={() => attemptEnable(main._id)}>Enable</button></div>
                             }
+                            <div><button className="btn-sm red" onClick={() => attemptDelete(main._id)}>Delete</button></div>
                         </td>
                     </tr>
                 ))}

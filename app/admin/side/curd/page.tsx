@@ -55,30 +55,42 @@ export default function Component() {
     imgg.src = URL.createObjectURL(event.target.files[0])
     imgg.onload = () => {
       const previewCanvas = document.getElementById("imagePreview") as HTMLCanvasElement
-      previewCanvas.getContext("2d")?.drawImage(imgg, 0, 0, imgg.width, imgg.height, 0, 0, 256, 144)
+      previewCanvas.hidden = false
+      previewCanvas.getContext("2d")?.drawImage(imgg, 0, 0, imgg.width, imgg.height, 0, 0, 256, 256)
     }
   }
     
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="enName">English name:</label>
-        <input type="text" id="enName" name="enName" />
-        <br />
-        <label htmlFor="cnName">Chinese name:</label>
-        <input type="text" id="cnName" name="cnName" />
-        <br />
-        <label htmlFor="type">type:</label>
-        <input type="text" id="type" name="type" />
-        <br />
-        <label htmlFor="cost">cost:</label>
-        <input type="number" id="cost" name="cost" step="any"/>
-        <br />
-        <label htmlFor="itemImage">Image:</label>
-        <input type="file" id="itemImage" name="itemImage" accept="image/*" onChange={imageChange}></input>
-        <br/>
-        <canvas id="imagePreview" height={144} width={256}></canvas>
-        <button type="submit">Submit</button>
+        <table className="form-table"><tbody>
+          <tr>
+            <td><label htmlFor="enName">English name:</label></td>
+            <td><input type="text" id="enName" name="enName" /></td>
+          </tr>
+          <tr>
+            <td><label htmlFor="cnName">Chinese name:</label></td>
+            <td><input type="text" id="cnName" name="cnName" /></td>
+          </tr>
+          <tr>
+            <td><label htmlFor="type">type:</label></td>
+            <td><input type="text" id="type" name="type" /></td>
+          </tr>
+          <tr>
+            <td><label htmlFor="cost">cost:</label></td>
+            <td><input type="number" id="cost" name="cost" step="any"/></td>
+          </tr>
+          <tr>
+            <td><label htmlFor="itemImage">Image:</label></td>
+            <td><input type="file" id="itemImage" name="itemImage" accept="image/*" onChange={imageChange}></input></td>
+          </tr>
+          <tr>
+            <td></td><td>
+              <canvas id="imagePreview" height={256} width={256} hidden></canvas>
+            </td>
+          </tr>
+        </tbody></table>
+        <button className="btn-sm green" type="submit">Submit</button>
       </form>
     </div>
   )

@@ -1,10 +1,18 @@
+"use client"
+import { useRouter } from "next/navigation"
 import MainstBody from "./tBody"
-import { checkAdmin } from "@/app/Components/Auth/AdminControl"
 
-export default async function Component() {
+export default function Component() {
   // await checkAdmin()
-
+  const router = useRouter()
   return (
+    <>
       <MainstBody/>
+      <button
+      className="btn-sm green"
+      onClick={()=> router.push("main/curd")}>
+        Add Main
+      </button>
+    </>
   )
 }
