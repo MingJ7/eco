@@ -2,8 +2,8 @@ import { createMains, deleteMains, updateMain } from "@/lib/mongodbaccess";
 import { S3 } from "aws-sdk";
 import { NextResponse } from "next/server";
 const s3Bucket = new S3({
-  accessKeyId: "AKIASL53ZPCIDRIZ634X",
-  secretAccessKey: "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",
+  accessKeyId: process.env.AWS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
   region: "ap-southeast-1",
 })
 
