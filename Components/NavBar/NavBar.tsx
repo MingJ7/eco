@@ -1,9 +1,9 @@
 "use client"
+import { Session } from 'next-auth'
 import NavBarItem from './NavBarItem'
 import { signIn, signOut, useSession } from 'next-auth/react'
 
-export function LoginBar() {
-  const { data: session } = useSession()
+export function LoginBar({session}: {session: Session | null}) {
   if (!session) return <button className='btn-sm green' onClick={()=>signIn()}>Sign in</button>
   return (
     <div className='flex w-full items-center'>
@@ -15,6 +15,7 @@ export function LoginBar() {
 }
 
 export default function NavBar() {
+  const { data: session } = useSession()
   return (
     <div className="Nav-bar">
       <h1 className='text-4xl font-bold float-left'>
@@ -24,8 +25,8 @@ export default function NavBar() {
         url="/order/dish"
         header='Create Order'
       />
-      <div />
-      <LoginBar />
+      {session?.user?.role == "Admin" ? <NavBarItem url="/admin" header='Manage Shop' /> : <div />}
+      <LoginBar session={session}/>
     </div>
   )
 }
