@@ -79,7 +79,12 @@ export default function Component() {
           </tr>
           <tr>
             <td><label htmlFor="type">type:</label></td>
-            <td><input type="text" id="type" name="type" /></td>
+            <td><select id="type" name="type" className="form-input">
+              <option value="meat">Meat</option>
+              <option value="veg">Vegetable</option>
+              <option value="fish">Fish</option>
+              <option value="others">Others</option>
+            </select></td>
           </tr>
           <tr>
             <td><label htmlFor="cost">cost:</label></td>
