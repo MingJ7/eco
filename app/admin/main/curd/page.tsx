@@ -1,7 +1,9 @@
 "use client"
-import { FormEvent, useState } from "react"
+import { useRouter } from "next/navigation"
+import { FormEvent } from "react"
 
 export default function Component() {
+  const router = useRouter()
   // Handles the submit event on form submit.
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         // Stop the form from submitting and refreshing the page.
@@ -9,6 +11,8 @@ export default function Component() {
         
         // Get data from the form.
         const form = event.target as HTMLFormElement
+        const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement
+        submitBtn.disabled = true
         const data = {
           enName: form.enName.value,
           cnName: form.cnName.value,
@@ -43,9 +47,10 @@ export default function Component() {
         if (response.status == 200){
           const result = await response.json()
           console.log(result)
-          alert('data sent properly')
+          router.push("/admin/main")
         }
         else alert('An error has occured')
+        submitBtn.disabled = false
         console.log("function has ended")
       }
 
@@ -85,7 +90,7 @@ export default function Component() {
             </td></tr>
           </tbody>
         </table>
-        <button className="btn-sm green" type="submit">Submit</button>
+        <button id="submit-btn" className="btn-sm green" type="submit">Submit</button>
       </form>
     </div>
   )
