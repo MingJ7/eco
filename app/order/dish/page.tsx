@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 
 export default function component() {
   const fetcher: Fetcher<Array<any>, string> = (uri) => fetch(uri).then((res) => { console.log(res); return res.json() })
-  const { data: mainsData, error: mainsError, isLoading: mainsIsLoading } = useSWR('/api/main', fetcher)
-  const { data: sidesData, error: sidesError, isLoading: sidesIsLoading } = useSWR('/api/side', fetcher)
+  const { data: mainsData, error: mainsError, isLoading: mainsIsLoading } = useSWR('/api/main', fetcher, {refreshInterval: 5000})
+  const { data: sidesData, error: sidesError, isLoading: sidesIsLoading } = useSWR('/api/side', fetcher, {refreshInterval: 5000})
   const router = useRouter()
 
   if (mainsIsLoading || sidesIsLoading) return <h1>Loading Data...</h1>
