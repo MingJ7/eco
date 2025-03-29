@@ -21,6 +21,11 @@ export default function Component() {
       onClick={()=> router.push("/admin/order")}>
         Manage Order
       </button>
+      <button
+      className="btn-sm green"
+      onClick={()=> router.push("/admin/camera")}>
+        Camera
+      </button>
     </div>
   )
 }
