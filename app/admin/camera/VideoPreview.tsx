@@ -1,7 +1,7 @@
 "use client"
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 
-export default function VideoPreview ({mediaStream, videoRef}: {mediaStream: MediaStream | undefined, videoRef: MutableRefObject<null | HTMLVideoElement>}){
+export default function VideoPreview ({mediaStream, videoRef}: {mediaStream: MediaStream | undefined, videoRef: RefObject<null | HTMLVideoElement>}){
     const [preview, setPreview] = useState(false);
     const [muted, setMuted] = useState(true);
 
@@ -24,7 +24,7 @@ export default function VideoPreview ({mediaStream, videoRef}: {mediaStream: Med
             <div hidden>
                 Muted <input type="checkbox" checked={muted} onChange={(evt) => setMuted(evt.target.checked)} />&emsp;
             </div>
-            <button onClick={() => setPreview(!preview)}>{preview ? "Hide Video" : "Display Video"}</button>
+            <button className="btn green" onClick={() => setPreview(!preview)}>{preview ? "Hide Video" : "Display Video"}</button>
         </div>
     )
 }

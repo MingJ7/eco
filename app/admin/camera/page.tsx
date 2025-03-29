@@ -12,6 +12,7 @@ export default function Component() {
     const canvasRef = useRef(null);
     const resultsRef = useRef(null);
     const [videoIn, setVideoIn] = useState("");
+    const [resultPreview, setResultPreview] = useState(false)
 
     async function takePhoto() {
         if (videoRef.current && canvasRef.current) {
@@ -106,11 +107,13 @@ export default function Component() {
         <MediaSelection videoIn={videoIn} setVideoIn={setVideoIn} />
         <VideoPreview videoRef={videoRef} mediaStream={mediaStream} />
         <canvas ref={canvasRef} hidden style={{maxWidth: "100vw"}}/>
-        <canvas ref={resultsRef} style={{maxWidth: "100vw"}}/>
+        <canvas ref={resultsRef} {...{hidden: resultPreview}} style={{maxWidth: "100vw"}}/>
+        <button className='btn green' onClick={() => setResultPreview(!resultPreview)}>{resultPreview ? "Display" : "Hide"} Results</button>
+        <br/>
         {mediaStream ? 
-            <button onClick={stop}>Stop</button>
+            <button className='btn green' onClick={stop}>Stop</button>
         :
-            <button onClick={start}>Start</button>
+            <button className='btn green' onClick={start}>Start</button>
         }
     </div>)
 }
