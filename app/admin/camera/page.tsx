@@ -6,49 +6,60 @@ import { getMLResult } from './server';
 
 export default function Component() {
     const [mediaStream, setMediaStream] = useState<undefined | MediaStream>();
-    const [interval, setMyInterval] = useState<undefined | NodeJS.Timeout>();
+    const [width, setWidth] = useState<number>(0);
+    const [height, setHeight] = useState<number>(0);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const resultsRef = useRef(null);
     const [videoIn, setVideoIn] = useState("");
 
-    let width = 0;
-    let height = 0;
-
-    function takePhoto() {
-        if (videoRef.current && canvasRef.current){
+    async function takePhoto() {
+        if (videoRef.current && canvasRef.current) {
             const videoElement = videoRef.current as HTMLVideoElement;
             const canvasElement = canvasRef.current as HTMLCanvasElement;
             const ctx = canvasElement.getContext("2d");
             ctx?.drawImage(videoElement, 0, 0, width, height);
 
-            canvasElement.toBlob(function(blob) {
-                const formData = new FormData();
-                formData.append('file', blob, 'filename.png');
-                getMLResult(formData).then((result) =>{
-                    console.log(result)
-                    ctx!.font = "bold 48px serif"
+            const blob = (await new Promise(resolve => canvasElement.toBlob(resolve))) as unknown as Blob
+            // canvasElement.toBlob(function (blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'filename.png');
+            return getMLResult(formData).then((result) => {
+                console.log(result)
+                if (resultsRef.current) {
+                    const resultsElement = resultsRef.current as HTMLCanvasElement;
+                    const resultsCtx = resultsElement.getContext("2d");
+                    resultsCtx?.drawImage(canvasElement, 0, 0, width, height);
+                    resultsCtx!.font = "bold 48px serif"
                     result.boxes.forEach((bbox: Array<Array<number>>, idx: number) => {
                         const box = bbox[0]
                         // ctx!.lineWidth = 1
-                        ctx?.strokeRect(box[0], box[1], box[2] - box[0], box[3] - box[1])
-                        ctx?.fillText(result.names[idx], box[0], box[1])
+                        resultsCtx?.strokeRect(box[0], box[1], box[2] - box[0], box[3] - box[1])
+                        resultsCtx?.fillText(result.names[idx], box[0], box[1])
                     });
-                });
+                }
             });
+            // });
         }
     }
-    
+
     function gotStream(stream: MediaStream) {
         setMediaStream(stream);
-        if (stream && videoRef.current){
+        if (stream && videoRef.current) {
             const videoElement = videoRef.current as HTMLVideoElement;
             videoElement.srcObject = stream;
-            if (canvasRef.current){
-                const streamSettings = stream.getVideoTracks()[0].getSettings();
+            const streamSettings = stream.getVideoTracks()[0].getSettings();
+            setWidth(streamSettings.width ?? 0)
+            setHeight(streamSettings.height ?? 0)
+            if (canvasRef.current) {
                 const canvasElement = canvasRef.current as HTMLCanvasElement;
-                canvasElement.width = width = streamSettings.width ?? 0;
-                canvasElement.height = height = streamSettings.height ?? 0;
-                setMyInterval(setInterval(takePhoto, 5000));
+                canvasElement.width = streamSettings.width ?? 0;
+                canvasElement.height = streamSettings.height ?? 0;
+            }
+            if (resultsRef.current) {
+                const canvasElement = resultsRef.current as HTMLCanvasElement;
+                canvasElement.width = streamSettings.width ?? 0;
+                canvasElement.height = streamSettings.height ?? 0;
             }
         }
         console.log("new Stream", stream)
@@ -64,10 +75,7 @@ export default function Component() {
         navigator.mediaDevices.getUserMedia(constraints).then(gotStream).catch(handleError);
     }
 
-    function stop(){
-        if (interval != undefined) {
-            clearInterval(interval)
-        }
+    function stop() {
         if (!mediaStream) return;
         mediaStream.getTracks().forEach(track => {
             track.stop();
@@ -75,10 +83,30 @@ export default function Component() {
         setMediaStream(undefined)
     }
 
+    useEffect(function doML(){
+        if (!mediaStream) return
+        let running = 1
+        let promise = takePhoto()
+        function temp(){
+            if (running){
+                promise = promise.then(async ()=>{
+                    const newPromise = await takePhoto()
+                    setTimeout(temp, 0)
+                    return newPromise
+                })
+            }
+        }
+        temp()
+        return function cleanup(){
+            running = 0
+        }
+    }, [mediaStream, width, height])
+
     return (<div>
-        <MediaSelection videoIn={videoIn} setVideoIn={setVideoIn}/>
+        <MediaSelection videoIn={videoIn} setVideoIn={setVideoIn} />
         <VideoPreview videoRef={videoRef} mediaStream={mediaStream} />
-        <canvas ref={canvasRef} style={{maxWidth: "100vw"}}/>
+        <canvas ref={canvasRef} hidden style={{maxWidth: "100vw"}}/>
+        <canvas ref={resultsRef} style={{maxWidth: "100vw"}}/>
         {mediaStream ? 
             <button onClick={stop}>Stop</button>
         :
