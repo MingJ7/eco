@@ -56,7 +56,8 @@ export default function RejectComponent({order, setSelected}: {order: WithId<Ior
         const response = await fetch("/api/admin/order", options)
         if (response.status == 200) {
             setSelected(undefined)
-            alert("rejected")
+        } else{
+            alert("An Error has occured")
         }
     }
     return (

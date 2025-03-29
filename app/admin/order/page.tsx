@@ -22,8 +22,8 @@ export default function Component() {
         body: JSON.stringify({ id: id , status: 1}),
     }
     const response = await fetch("/api/admin/order", options)
-    if (response.status == 200) {
-        alert("completed")
+    if (response.status != 200) {
+        alert("An Error has occured")
     }
   }
 
