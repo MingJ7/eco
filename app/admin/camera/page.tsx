@@ -19,16 +19,21 @@ export default function Component() {
             const videoElement = videoRef.current as HTMLVideoElement;
             const canvasElement = canvasRef.current as HTMLCanvasElement;
             const ctx = canvasElement.getContext("2d");
-            console.log(width, height)
             ctx?.drawImage(videoElement, 0, 0, width, height);
-
-            const data = canvasElement.toDataURL("image/jpg", 0.8)
-            document.getElementById("Testimg")!.src = data
 
             canvasElement.toBlob(function(blob) {
                 const formData = new FormData();
                 formData.append('file', blob, 'filename.png');
-                getMLResult(formData);
+                getMLResult(formData).then((result) =>{
+                    console.log(result)
+                    ctx!.font = "bold 48px serif"
+                    result.boxes.forEach((bbox: Array<Array<number>>, idx: number) => {
+                        const box = bbox[0]
+                        // ctx!.lineWidth = 1
+                        ctx?.strokeRect(box[0], box[1], box[2] - box[0], box[3] - box[1])
+                        ctx?.fillText(result.names[idx], box[0], box[1])
+                    });
+                });
             });
         }
     }
@@ -73,12 +78,11 @@ export default function Component() {
     return (<div>
         <MediaSelection videoIn={videoIn} setVideoIn={setVideoIn}/>
         <VideoPreview videoRef={videoRef} mediaStream={mediaStream} />
-        <canvas hidden ref={canvasRef} />
+        <canvas ref={canvasRef} style={{maxWidth: "100vw"}}/>
         {mediaStream ? 
             <button onClick={stop}>Stop</button>
         :
             <button onClick={start}>Start</button>
         }
-        <img id="Testimg"/>
     </div>)
 }
