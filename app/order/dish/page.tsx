@@ -20,7 +20,7 @@ export default function component() {
       <CatHeaders />
       <h1 className="cat-header-title" id="mains">Mains</h1>
       <MainsMenu
-        ItemList={mainsData ?? []}
+        ItemList={mainsData?.filter((main) => main.status) ?? []}
       />
       <h1 className="cat-header-title" id="meat">Meat</h1>
       <Menu
